@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import static com.kishannareshpal.superdialog.AnimatedIcon.Mode.ERROR;
+import static com.kishannareshpal.superdialog.AnimatedIcon.Mode.SUCCESS;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -21,22 +24,8 @@ public class MainActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final SuperDialog sd = new SuperDialog()
-                        .title("Hello World")
-                        .iconMode(AnimatedIcon.Mode.INDEFINITE)
-                        .cancelText("Fechar");
-
-                sd.show(getSupportFragmentManager());
-
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        sd.iconMode(SuperDialog.CUSTOM_ICON);
-                        sd.cancelText("Close");
-                        sd.changeTitleCaps(true);
-                    }
-                }, 5000);
+                asi.setMode(SUCCESS);
+                asi2.setMode(ERROR);
             }
         });
     }

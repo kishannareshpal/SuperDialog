@@ -21,18 +21,16 @@ import android.widget.ImageView;
 import android.widget.Space;
 import android.widget.TextView;
 
-import static com.kishannareshpal.superdialog.AnimatedIcon.Mode.STOPED;
-
 public class SuperDialog extends DialogFragment {
 
     public static final int POSITIVE = 9;
     public static final int NEGATIVE = 10;
     public static final int CANCEL = 11;
 
-    public static final int CUSTOM_ICON = 0;
-    public static final int INDEFINITE_ICON = 0;
-    public static final int SUCCESS_ICON = 1;
-    public static final int ERROR_ICON = 2;
+    public static final int CUSTOM_ICON   = 0;
+    public static final int PROGRESS_ICON = 1;
+    public static final int SUCCESS_ICON  = 2;
+    public static final int ERROR_ICON    = 3;
 
     private static final int DEFAULT = -1;
 
@@ -252,6 +250,9 @@ public class SuperDialog extends DialogFragment {
         if (positiveText != null){
             btn_positive.setVisibility(View.VISIBLE);
             btn_positive.setText(positiveText);
+
+        } else {
+            btn_positive.setVisibility(View.GONE);
         }
     }
     private void changeOnPositive(final OnButtonClickListener onPositive){
@@ -286,11 +287,14 @@ public class SuperDialog extends DialogFragment {
         }
     }
 
+
     // Setup Negative Button
     private void changeNegativeText(String negativeText){
         if (negativeText != null){
             btn_negative.setVisibility(View.VISIBLE);
             btn_negative.setText(negativeText);
+        } else {
+            btn_negative.setVisibility(View.GONE);
         }
     }
     private void changeOnNegative(final OnButtonClickListener onNegative){
@@ -325,11 +329,14 @@ public class SuperDialog extends DialogFragment {
         }
     }
 
+
     // Setup Cancel Button
     private void changeCancelText(String cancelText){
         if (cancelText != null){
             btn_cancel.setVisibility(View.VISIBLE);
             btn_cancel.setText(cancelText);
+        } else {
+            btn_cancel.setVisibility(View.GONE);
         }
     }
     private void changeOnCancel(final OnButtonClickListener onCancel){
@@ -369,11 +376,17 @@ public class SuperDialog extends DialogFragment {
         if (title != null){
             tv_title.setVisibility(View.VISIBLE);
             tv_title.setText(title);
+
+        } else {
+            tv_title.setVisibility(View.GONE);
         }
     }
     public void changeTitleCaps(boolean isAllCaps){
         if (title != null) {
             tv_title.setAllCaps(isAllCaps);
+
+        } else {
+            tv_title.setVisibility(View.GONE);
         }
     }
 
@@ -382,13 +395,14 @@ public class SuperDialog extends DialogFragment {
         if (message != null) {
             tv_message.setVisibility(View.VISIBLE);
             tv_message.setText(message);
+
+        } else {
+            tv_message.setVisibility(View.GONE);
         }
     }
     public void changeMessageGravity(int gravity){
         if (message != null) {
-            if (gravity != DEFAULT) {
-                tv_message.setGravity(gravity);
-            }
+            tv_message.setGravity(gravity);
         }
     }
 
@@ -396,7 +410,7 @@ public class SuperDialog extends DialogFragment {
     private void changeIconMode(int iconMode){
         if (iconMode == CUSTOM_ICON){
             ai_animatedIcon.setVisibility(View.GONE);
-            ai_animatedIcon.setMode(STOPED);
+            ai_animatedIcon.setMode(CUSTOM_ICON);
 
         } else {
             ai_animatedIcon.setVisibility(View.VISIBLE);

@@ -16,27 +16,27 @@ import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.BounceInterpolator;
 
-import static com.kishannareshpal.superdialog.AnimatedIcon.Mode.ERROR;
-import static com.kishannareshpal.superdialog.AnimatedIcon.Mode.INDEFINITE;
-import static com.kishannareshpal.superdialog.AnimatedIcon.Mode.STOPED;
-import static com.kishannareshpal.superdialog.AnimatedIcon.Mode.SUCCESS;
+import static com.kishannareshpal.superdialog.AnimatedIcon.Mode.CUSTOM_ICON;
+import static com.kishannareshpal.superdialog.AnimatedIcon.Mode.ERROR_ICON;
+import static com.kishannareshpal.superdialog.AnimatedIcon.Mode.PROGRESS_ICON;
+import static com.kishannareshpal.superdialog.AnimatedIcon.Mode.SUCCESS_ICON;
 
 public class AnimatedIcon extends View {
 
     Context ctx;
 
     class Mode {
-        public static final int STOPED = -1;
-        public static final int SUCCESS = 0;
-        public static final int ERROR = 1;
-        public static final int INDEFINITE = 2;
+        public static final int CUSTOM_ICON   = 0;
+        public static final int PROGRESS_ICON = 1;
+        public static final int SUCCESS_ICON  = 2;
+        public static final int ERROR_ICON    = 3;
     }
 
     private int fullWidth, fullHeight;
     private int default_padding = 8;
     private int circle_sweepAngle;
     private int strokeWidth = 8;
-    private int mode = INDEFINITE;
+    private int mode = CUSTOM_ICON;
 
 
     private RectF oval;
@@ -47,13 +47,13 @@ public class AnimatedIcon extends View {
     public void setMode(int mode) {
         this.mode = mode;
 
-        if (mode == INDEFINITE) {
+        if (mode == PROGRESS_ICON) {
             valueAnimator.start();
 
-        } else if (mode == STOPED){
+        } else if (mode == CUSTOM_ICON){
             valueAnimator.end();
 
-        } else if (mode == SUCCESS){
+        } else if (mode == SUCCESS_ICON){
             valueAnimator.end();
             main_paint.setColor(ContextCompat.getColor(ctx, R.color.secondary_green));
             stroke_paint.setColor(ContextCompat.getColor(ctx, R.color.secondary_green));
@@ -71,7 +71,7 @@ public class AnimatedIcon extends View {
             });
             animator.start();
 
-        } else if (mode == ERROR) {
+        } else if (mode == ERROR_ICON) {
             valueAnimator.end();
             main_paint.setColor(ContextCompat.getColor(ctx, R.color.secondary_red));
             stroke_paint.setColor(ContextCompat.getColor(ctx, R.color.secondary_red));
@@ -171,7 +171,7 @@ public class AnimatedIcon extends View {
         canvas.drawCircle(cx, cy, circle_radius, main_paint);
 
 
-        if (mode == SUCCESS){
+        if (mode == SUCCESS_ICON){
             float linestart_x = width/3;
             float linestart_y = (height/3) + (height/5);
             float lineend_x = width/2;
@@ -181,7 +181,7 @@ public class AnimatedIcon extends View {
             linestart_y = height/3;
             canvas.drawLine(lineend_x, lineend_y, linestart_x-2, linestart_y, icon_paint);
 
-        } else if (mode == ERROR) {
+        } else if (mode == ERROR_ICON) {
             float linestart_x = (fullWidth/2) - (fullWidth/6);
             float linestart_y = (fullHeight/2) - (fullHeight/6);
             float lineend_x = (fullWidth/2) + (fullWidth/6);

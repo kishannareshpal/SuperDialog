@@ -36,6 +36,7 @@ public class SuperDialog extends DialogFragment {
 
     private boolean isShown = false;
     private Context ctx;
+    SuperDialog superDialog;
 
     // Components
     private AnimatedIcon ai_animatedIcon;
@@ -54,6 +55,7 @@ public class SuperDialog extends DialogFragment {
     private int negativeColorRes = DEFAULT;
     private int cancelColorRes = DEFAULT;
     private boolean isAllCaps;
+    private boolean cancelable;
     private String title;
     private String message;
     private String positiveText;
@@ -69,12 +71,17 @@ public class SuperDialog extends DialogFragment {
     }
 
     public interface OnButtonClickListener {
-        void OnButtonClick(Dialog dialog, int whichButton);
+        void OnButtonClick(SuperDialog dialog, int whichButton);
     }
 
     public SuperDialog iconMode(int mode) {
         this.iconMode = mode;
         if (isShown) changeIconMode(mode);
+        return this;
+    }
+    public SuperDialog cancelable(boolean cancelable){
+        this.cancelable = cancelable;
+        if (isShown) changeCancelable(cancelable);
         return this;
     }
     public SuperDialog positiveText(String positiveText) {
@@ -179,6 +186,7 @@ public class SuperDialog extends DialogFragment {
 
         // Init Utils
         this.ctx = getActivity();
+        this.superDialog = this;
 
         // Set transparent background and remove stock title decoration views.. so the round corners bg shows.
         if (getDialog() != null && getDialog().getWindow() != null) {
@@ -245,6 +253,12 @@ public class SuperDialog extends DialogFragment {
     }
 
 
+
+    // Setup Cancelable
+    private void changeCancelable(boolean cancelable){
+        setCancelable(cancelable);
+    }
+
     // Setup Positive Button
     private void changePositiveText(String positiveText){
         if (positiveText != null){
@@ -261,8 +275,10 @@ public class SuperDialog extends DialogFragment {
                 btn_positive.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        onPositive.OnButtonClick(getDialog(), POSITIVE);
-                        getDialog().dismiss();
+                        onPositive.OnButtonClick(superDialog, POSITIVE);
+                        if (cancelable){
+                            getDialog().dismiss();
+                        }
                     }
                 });
 
@@ -303,8 +319,10 @@ public class SuperDialog extends DialogFragment {
                 btn_negative.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        onNegative.OnButtonClick(getDialog(), NEGATIVE);
-                        getDialog().dismiss();
+                        onNegative.OnButtonClick(superDialog, NEGATIVE);
+                        if (cancelable) {
+                            getDialog().dismiss();
+                        }
                     }
                 });
 
@@ -345,8 +363,10 @@ public class SuperDialog extends DialogFragment {
                 btn_cancel.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        onCancel.OnButtonClick(getDialog(), CANCEL);
-                        getDialog().dismiss();
+                        onCancel.OnButtonClick(superDialog, CANCEL);
+                        if (cancelable) {
+                            getDialog().dismiss();
+                        }
                     }
                 });
 

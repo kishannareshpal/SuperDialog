@@ -217,9 +217,7 @@ public class SuperDialog extends DialogFragment {
         changeMessageGravity(gravity);
 
         // Add space between positive and negative button when both are visible.
-        if (negativeText != null && positiveText != null){
-            space.setVisibility(View.VISIBLE);
-        }
+        addSpaceBetweenButtons();
 
         // Setup Positive Button
         changePositiveText(positiveText);
@@ -254,6 +252,13 @@ public class SuperDialog extends DialogFragment {
 
 
 
+    // Setup Space between buttons
+    private void addSpaceBetweenButtons(){
+        if (negativeText != null && positiveText != null){
+            space.setVisibility(View.VISIBLE);
+        }
+    }
+
     // Setup Cancelable
     private void changeCancelable(boolean cancelable){
         setCancelable(cancelable);
@@ -264,6 +269,12 @@ public class SuperDialog extends DialogFragment {
         if (positiveText != null){
             btn_positive.setVisibility(View.VISIBLE);
             btn_positive.setText(positiveText);
+
+            if (negativeText != null){
+                space.setVisibility(View.VISIBLE);
+            } else {
+                space.setVisibility(View.GONE);
+            }
 
         } else {
             btn_positive.setVisibility(View.GONE);
@@ -309,6 +320,13 @@ public class SuperDialog extends DialogFragment {
         if (negativeText != null){
             btn_negative.setVisibility(View.VISIBLE);
             btn_negative.setText(negativeText);
+
+            if (positiveText != null){
+                space.setVisibility(View.VISIBLE);
+            } else {
+                space.setVisibility(View.GONE);
+            }
+
         } else {
             btn_negative.setVisibility(View.GONE);
         }

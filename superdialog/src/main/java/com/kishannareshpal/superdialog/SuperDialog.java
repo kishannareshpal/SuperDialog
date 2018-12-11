@@ -55,7 +55,7 @@ public class SuperDialog extends DialogFragment {
     private int negativeColorRes = DEFAULT;
     private int cancelColorRes = DEFAULT;
     private boolean isAllCaps;
-    private boolean cancelable;
+    private boolean cancelable = true;
     private String title;
     private String message;
     private String positiveText;

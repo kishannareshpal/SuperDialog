@@ -1,13 +1,23 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
-group = 'com.github.kishannareshpal'
-version = 'v1.2.3'
+apply plugin: 'com.novoda.bintray-release'
+
+
+publish {
+    def groupProjectID = 'com.kishannareshpal'
+    def artifactProjectID = 'superdialog'
+    def publishVersionID = '1.0.0'
+
+    userOrg = 'kishannareshpal'
+    repoName = 'maven'
+    groupId = groupProjectID
+    artifactId = artifactProjectID
+    publishVersion = publishVersionID
+    desc = 'A cool android dialog library.'
+    website = 'https://github.com/kishannareshpal/SuperDialog'
+}
 
 android {
     compileSdkVersion 28
-
-
-
     defaultConfig {
         minSdkVersion 17
         targetSdkVersion 28

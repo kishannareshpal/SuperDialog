@@ -6,8 +6,9 @@
     <color name="colorAccent">#424242</color> <!-- Same as md_grey_800 -->
 
     <color name="safety_blue">#2870E9</color>
-    <color name="secondary_green">#37D88E</color>
     <color name="secondary_red">#F74F40</color>
+    <color name="secondary_green">#37D88E</color>
+    <color name="secondary_yellow">#FFBF59</color>
 
     <color name="md_grey_50">#FAFAFA</color>
     <color name="md_grey_100">#F5F5F5</color>

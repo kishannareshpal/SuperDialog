@@ -3,137 +3,214 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/examesdialog_round"
-    android:minWidth="260dp"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingTop="24dp"
-    android:paddingBottom="5dp"
-    tools:visibility="visible"
+    android:padding="24dp"
     tools:context=".SuperDialog">
 
-    <com.kishannareshpal.superdialog.AnimatedIcon
-        android:id="@+id/ai_animatedIcon"
-        android:layout_width="54dp"
-        android:layout_height="54dp"
-        android:layout_marginBottom="14dp"
-        android:layout_gravity="center"
-        android:visibility="gone"
-        tools:visibility="visible"/>
-
-    <ImageView
-        android:id="@+id/iv_icon"
+    <RelativeLayout
+        android:id="@+id/ll_root"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="14dp"
-        android:scaleType="fitXY"
-        android:visibility="gone"
-        tools:visibility="visible" />
+        android:background="@drawable/superdialog_background"
+        android:paddingTop="18dp">
 
-    <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="5dp"
-        android:text="Title"
-        android:textAllCaps="true"
-        android:textColor="@color/md_black_1000"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:visibility="gone"
-        tools:visibility="visible" />
+        <ImageView
+            android:id="@+id/iv_icon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="5dp"
+            android:scaleType="fitXY"
+            android:visibility="gone"
+            tools:src="@tools:sample/avatars[8]"
+            tools:visibility="visible" />
 
+        <com.kishannareshpal.superdialog.AnimatedIcon
+            android:id="@+id/ai_animatedIcon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_below="@+id/iv_icon"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:layout_marginBottom="5dp"
+            android:layout_weight="1"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="8dp"
-        android:fadeScrollbars="false">
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ai_animatedIcon"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="5dp"
+            android:gravity="center"
+            android:text="Por favor selecione todas as opções antes de continuar."
+            android:textAllCaps="false"
+            android:textColor="@color/md_black_1000"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_below="@+id/tv_title"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:weightSum="1">
 
-            <TextView
-                android:id="@+id/tv_message"
+            <RelativeLayout
+                android:id="@+id/messageView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:breakStrategy="simple"
-                android:gravity="center_horizontal"
-                android:maxLines="14"
-                android:paddingStart="24dp"
-                android:paddingEnd="24dp"
-                android:visibility="gone"
-                tools:visibility="visible" />
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <View
+                    android:id="@+id/v_scrollIndicator_top"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_alignParentTop="true"
+                    android:alpha="0"
+                    android:background="@color/md_grey_200" />
+
+                <com.kishannareshpal.superdialog.FadingEdgeLayout
+                    android:id="@+id/fel_fadingEdge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/v_scrollIndicator_top"
+                    app:fel_edge="bottom"
+                    app:fel_size_bottom="18dp"
+                    app:fel_size_top="18dp">
+
+                    <ScrollView
+                        android:id="@+id/sv_scrollMessage"
+                        style="@style/SuperDialog.ScrollView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scrollbarDefaultDelayBeforeFade="7000">
+
+                        <TextView
+                            android:id="@+id/tv_message"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:autoLink="web|email|phone|all"
+                            android:gravity="center_horizontal"
+                            android:linksClickable="true"
+                            android:paddingStart="24dp"
+                            android:paddingEnd="24dp"
+                            android:textColor="@color/md_grey_700"
+                            android:textColorHighlight="@color/md_grey_200"
+                            android:textColorLink="@color/secondary_green"
+                            android:textIsSelectable="true" />
+                    </ScrollView>
+
+                </com.kishannareshpal.superdialog.FadingEdgeLayout>
+
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/v_scrollIndicator_bottom"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/fel_fadingEdge"
+                android:layout_marginTop="-1dp"
+                android:layout_marginBottom="5dp"
+                android:alpha="0"
+                android:background="@color/md_grey_200" />
+
+            <LinearLayout
+                android:id="@+id/actionButtons"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/ll_mainButtons"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:orientation="horizontal"
+                    tools:visibility="visible">
+
+                    <android.support.design.button.MaterialButton
+                        android:id="@+id/btn_negative"
+                        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:text="Guia"
+                        android:textAllCaps="true"
+                        android:textColor="@color/md_white_1000"
+                        android:textSize="12sp"
+                        android:typeface="normal"
+                        android:visibility="gone"
+                        app:backgroundTint="@color/secondary_green"
+                        app:cornerRadius="32dp"
+                        tools:visibility="visible" />
+
+                    <Space
+                        android:id="@+id/space"
+                        android:layout_width="6dp"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+
+                    <android.support.design.button.MaterialButton
+                        android:id="@+id/btn_positive"
+                        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:text="Enunciado"
+                        android:textAllCaps="true"
+                        android:textColor="@color/md_white_1000"
+                        android:textSize="12sp"
+                        android:visibility="gone"
+                        app:backgroundTint="@color/secondary_green"
+                        app:cornerRadius="32dp"
+                        tools:visibility="visible" />
+
+                </LinearLayout>
+
+                <android.support.design.button.MaterialButton
+                    android:id="@+id/btn_cancel"
+                    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginBottom="6dp"
+                    android:text="Fechar"
+                    android:textAllCaps="true"
+                    android:textColor="@color/md_grey_800"
+                    android:textSize="12sp"
+                    android:visibility="gone"
+                    app:backgroundTint="@color/md_grey_200"
+                    app:cornerRadius="32dp"
+                    tools:visibility="visible" />
+
+            </LinearLayout>
+
         </LinearLayout>
-    </ScrollView>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:orientation="horizontal"
-        tools:visibility="visible">
-
-        <android.support.design.button.MaterialButton
-            android:id="@+id/btn_negative"
-            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Guia"
-            android:textAllCaps="true"
-            android:textColor="@color/md_white_1000"
-            android:visibility="gone"
-            app:backgroundTint="@color/secondary_green"
-            app:cornerRadius="32dp"
-            tools:visibility="visible" />
-
-        <Space
-            android:id="@+id/space"
-            android:layout_width="6dp"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            tools:visibility="visible" />
-
-        <android.support.design.button.MaterialButton
-            android:id="@+id/btn_positive"
-            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Enunciado"
-            android:textAllCaps="true"
-            android:textColor="@color/md_white_1000"
-            android:visibility="gone"
-            app:backgroundTint="@color/secondary_green"
-            app:cornerRadius="32dp"
-            tools:visibility="visible" />
-
-    </LinearLayout>
-
-    <android.support.design.button.MaterialButton
-        android:id="@+id/btn_cancel"
-        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:text="Fechar"
-        android:textAllCaps="true"
-        android:textColor="@color/md_grey_800"
-        android:visibility="gone"
-        app:backgroundTint="@color/md_grey_200"
-        app:cornerRadius="32dp"
-        tools:visibility="visible" />
+    </RelativeLayout>
 
 </LinearLayout>

@@ -7,30 +7,33 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.annotation.ColorRes;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.button.MaterialButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.ColorUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.Space;
 import android.widget.TextView;
 
-public class SuperDialog extends DialogFragment {
+public class
+SuperDialog extends DialogFragment {
 
     public static final int POSITIVE = 9;
     public static final int NEGATIVE = 10;
     public static final int CANCEL = 11;
 
-    public static final int CUSTOM_ICON   = 0;
-    public static final int PROGRESS_ICON = 1;
-    public static final int SUCCESS_ICON  = 2;
-    public static final int ERROR_ICON    = 3;
 
     private static final int DEFAULT = -1;
 
@@ -43,25 +46,29 @@ public class SuperDialog extends DialogFragment {
     private MaterialButton btn_positive, btn_negative, btn_cancel;
     private TextView tv_title, tv_message;
     private ImageView iv_icon;
+    private ScrollView sv_scrollMessage;
+    private FadingEdgeLayout fel_fadingEdge;
+    private View v_scrollIndicator_top, v_scrollIndicator_bottom;
 
     // Setters
-    private int iconMode = CUSTOM_ICON;
-    private int gravity = DEFAULT;
-    private int customIconRes = DEFAULT;
-    private int positiveTextColorRes = DEFAULT;
-    private int negativeTextColorRes = DEFAULT;
-    private int cancelTextColorRes = DEFAULT;
-    private int positiveColorRes = DEFAULT;
-    private int negativeColorRes = DEFAULT;
-    private int cancelColorRes = DEFAULT;
-    private boolean isAllCaps;
+    private IconMode iconMode = IconMode.NO_ICON; // No Icon.
+    private int gravity = DEFAULT; // Centered.
+    @DrawableRes private int customIconRes = DEFAULT; // None.
+    @ColorRes private int positiveTextColorRes = DEFAULT; // White.
+    @ColorRes private int negativeTextColorRes = DEFAULT; // White.
+    @ColorRes private int cancelTextColorRes = DEFAULT; // White.
+    @ColorRes private int positiveColorRes = DEFAULT; // Light Green.
+    @ColorRes private int negativeColorRes = DEFAULT; // Light Green.
+    @ColorRes private int cancelColorRes = DEFAULT; // Light Grey.
+    private boolean isScrollable;
+    private boolean isAllCaps; // false.
     private boolean cancelable = true;
-    private String title;
-    private String message;
-    private String positiveText;
-    private String negativeText;
-    private String cancelText;
-    private Space space;
+    private String title; // null.
+    private String message; // null.
+    private String positiveText; // null.
+    private String negativeText; // null.
+    private String cancelText; // null.
+    private Space space; // View.VISIBLE.
     private OnButtonClickListener onPositive, onNegative, onCancel;
 
     @Override
@@ -74,9 +81,9 @@ public class SuperDialog extends DialogFragment {
         void OnButtonClick(SuperDialog dialog, int whichButton);
     }
 
-    public SuperDialog iconMode(int mode) {
-        this.iconMode = mode;
-        if (isShown) changeIconMode(mode);
+    public SuperDialog iconMode(IconMode iconMode) {
+        this.iconMode = iconMode;
+        if (isShown) changeIconMode(iconMode);
         return this;
     }
     public SuperDialog cancelable(boolean cancelable){
@@ -114,7 +121,7 @@ public class SuperDialog extends DialogFragment {
         if (isShown) changeOnCancel(onCancel);
         return this;
     }
-    public SuperDialog customIconRes(int iconRes) {
+    public SuperDialog customIconRes(@DrawableRes int iconRes) {
         this.customIconRes = iconRes;
         if (isShown) changeCustomIconRes(iconRes);
         return this;
@@ -135,7 +142,11 @@ public class SuperDialog extends DialogFragment {
     }
     public SuperDialog message(String message) {
         this.message = message;
-        if (isShown) changeMessage(message);
+        this.gravity = Gravity.CENTER;
+        if (isShown) {
+            changeMessage(message);
+            changeMessageGravity(Gravity.CENTER);
+        }
         return this;
     }
     public SuperDialog message(String message, int gravity) {
@@ -148,36 +159,55 @@ public class SuperDialog extends DialogFragment {
         }
         return this;
     }
-    public SuperDialog positiveTextColorRes(int positiveTextColorRes) {
+    public SuperDialog positiveTextColorRes(@ColorRes int positiveTextColorRes) {
         this.positiveTextColorRes = positiveTextColorRes;
         if (isShown && ctx != null) changePositiveTextColor(positiveTextColorRes);
         return this;
     }
-    public SuperDialog negativeTextColorRes(int negativeTextColorRes) {
+    public SuperDialog negativeTextColorRes(@ColorRes int negativeTextColorRes) {
         this.negativeTextColorRes = negativeTextColorRes;
         if (isShown && ctx != null) changeNegativeTextColor(negativeTextColorRes);
         return this;
     }
-    public SuperDialog cancelTextColorRes(int cancelTextColorRes) {
+    public SuperDialog cancelTextColorRes(@ColorRes int cancelTextColorRes) {
         this.cancelTextColorRes = cancelTextColorRes;
         if (isShown && ctx != null) changeCancelTextColor(cancelTextColorRes);
         return this;
     }
-    public SuperDialog positiveColorRes(int positiveColorRes) {
+    public SuperDialog positiveColorRes(@ColorRes int positiveColorRes) {
         this.positiveColorRes = positiveColorRes;
         if (isShown && ctx != null) changePositiveColor(positiveColorRes);
         return this;
     }
-    public SuperDialog negativeColorRes(int negativeColorRes) {
+    public SuperDialog negativeColorRes(@ColorRes int negativeColorRes) {
         this.negativeColorRes = negativeColorRes;
         if (isShown && ctx != null) changeNegativeColor(negativeColorRes);
         return this;
     }
-    public SuperDialog cancelColorRes(int cancelColorRes) {
+    public SuperDialog cancelColorRes(@ColorRes int cancelColorRes) {
         this.cancelColorRes = cancelColorRes;
         if (isShown && ctx != null) changeNegativeColor(cancelColorRes);
         return this;
     }
+
+    public boolean isScrollable() {
+        return this.isScrollable;
+    }
+
+
+    /*
+     * @source: https://stackoverflow.com/questions/14657490/how-to-properly-retain-a-dialogfragment-through-rotation
+     */
+    @Override
+    public void onDestroyView() {
+        Dialog dialog = getDialog();
+        // handles https://code.google.com/p/android/issues/detail?id=17423
+        if (dialog != null && getRetainInstance()) {
+            dialog.setDismissMessage(null);
+        }
+        super.onDestroyView();
+    }
+
 
     @Nullable
     @Override
@@ -190,19 +220,25 @@ public class SuperDialog extends DialogFragment {
 
         // Set transparent background and remove stock title decoration views.. so the round corners bg shows.
         if (getDialog() != null && getDialog().getWindow() != null) {
-            getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+            Window window = getDialog().getWindow();
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            window.requestFeature(Window.FEATURE_NO_TITLE);
         }
+        this.setRetainInstance(true);
 
         // INIT COMPONENTS
-        tv_title        = view.findViewById(R.id.tv_title);
-        tv_message      = view.findViewById(R.id.tv_message);
-        iv_icon         = view.findViewById(R.id.iv_icon);
-        btn_positive    = view.findViewById(R.id.btn_positive);
-        ai_animatedIcon = view.findViewById(R.id.ai_animatedIcon);
-        btn_negative    = view.findViewById(R.id.btn_negative);
-        btn_cancel      = view.findViewById(R.id.btn_cancel);
-        space           = view.findViewById(R.id.space);
+        fel_fadingEdge           = view.findViewById(R.id.fel_fadingEdge);
+        sv_scrollMessage         = view.findViewById(R.id.sv_scrollMessage);
+        v_scrollIndicator_top    = view.findViewById(R.id.v_scrollIndicator_top);
+        v_scrollIndicator_bottom = view.findViewById(R.id.v_scrollIndicator_bottom);
+        tv_title                 = view.findViewById(R.id.tv_title);
+        tv_message               = view.findViewById(R.id.tv_message);
+        iv_icon                  = view.findViewById(R.id.iv_icon);
+        btn_positive             = view.findViewById(R.id.btn_positive);
+        ai_animatedIcon          = view.findViewById(R.id.ai_animatedIcon);
+        btn_negative             = view.findViewById(R.id.btn_negative);
+        btn_cancel               = view.findViewById(R.id.btn_cancel);
+        space                    = view.findViewById(R.id.space);
 
         // Setup Icon
         changeIconMode(iconMode);
@@ -233,13 +269,13 @@ public class SuperDialog extends DialogFragment {
 
 
         /**
-         * Colors
+         * Button color setup
          */
         if (ctx != null) {
             // Setup Button Text Colors
             changePositiveTextColor(positiveTextColorRes);
             changeNegativeTextColor(negativeTextColorRes);
-            changeCancelTextColor(negativeTextColorRes);
+            changeCancelTextColor(cancelTextColorRes);
 
             // Setup Button Background Colors
             changePositiveColor(positiveColorRes);
@@ -250,21 +286,92 @@ public class SuperDialog extends DialogFragment {
         return view;
     }
 
+    // Is the scrollview set to be scrollable at the momment??
+    private void manageMessageScroll() {
+        sv_scrollMessage.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                // Here you can get the size :)
+                View child = sv_scrollMessage.getChildAt(0);
+                if (child != null) {
+                    int childHeight = child.getHeight();
+                    isScrollable = sv_scrollMessage.getHeight() < childHeight + sv_scrollMessage.getPaddingTop() + sv_scrollMessage.getPaddingBottom();
+                    v_scrollIndicator_top.animate().alpha(0).start();
+                    if (isScrollable) {
+                        v_scrollIndicator_bottom.animate().alpha(1).start();
+                    } else {
+                        v_scrollIndicator_bottom.animate().alpha(0).start();
+                        fel_fadingEdge.setFadeEdges(false, false, false, false);
+                    }
+                }
+            }
+        });
+
+        sv_scrollMessage.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
+                int scrollY = sv_scrollMessage.getScrollY();
+
+                if (scrollY > 0 && scrollY < sv_scrollMessage.getMaxScrollAmount()){
+                    v_scrollIndicator_top.animate().alpha(1).setDuration(250).start();
+                    v_scrollIndicator_bottom.animate().alpha(1).setDuration(250).start();
+
+                    fel_fadingEdge.setFadeEdges(true, false, true, false);
+
+                } else {
+                    if (!sv_scrollMessage.canScrollVertically(1)) {
+                        // bottom of scroll view
+                        v_scrollIndicator_top.animate().alpha(1).setDuration(250).start();
+                        v_scrollIndicator_bottom.animate().alpha(0).setDuration(250).start();
+
+                        fel_fadingEdge.setFadeEdges(true, false, false, false);
+                    }
+
+                    if (!sv_scrollMessage.canScrollVertically(-1)) {
+                        // top of scroll view
+                        v_scrollIndicator_bottom.animate().alpha(1).setDuration(250).start();
+                        v_scrollIndicator_top.animate().alpha(0).setDuration(250).start();
+
+//                        v_scrollIndicator_bottom.setVisibility(View.VISIBLE);
+                        fel_fadingEdge.setFadeEdges(false, false, true, false);
+                    }
+                }
+
+            }
+        });
 
 
-    // Setup Space between buttons
+    }
+
+
+    private boolean isColorDark(@ColorRes int colorRes){
+        return ColorUtils.calculateLuminance(ContextCompat.getColor(ctx, colorRes)) < 0.6F;
+    }
+
+
+    /**
+     *  Setup Space between buttons
+     */
     private void addSpaceBetweenButtons(){
         if (negativeText != null && positiveText != null){
             space.setVisibility(View.VISIBLE);
         }
     }
 
-    // Setup Cancelable
+
+    /**
+     * Setup Cancelable
+     * @param cancelable
+     */
     private void changeCancelable(boolean cancelable){
         setCancelable(cancelable);
     }
 
-    // Setup Positive Button
+
+    /**
+     * Setup Positive Button
+     * @param positiveText
+     */
     private void changePositiveText(String positiveText){
         if (positiveText != null){
             btn_positive.setVisibility(View.VISIBLE);
@@ -303,19 +410,26 @@ public class SuperDialog extends DialogFragment {
             }
         }
     }
-    private void changePositiveTextColor(int positiveTextColorRes){
+    private void changePositiveTextColor(@ColorRes int positiveTextColorRes){
         if (positiveTextColorRes != DEFAULT) {
             btn_positive.setTextColor(ContextCompat.getColor(ctx, positiveTextColorRes));
         }
     }
-    private void changePositiveColor(int positiveColorRes){
+    private void changePositiveColor(@ColorRes int positiveColorRes){
         if (positiveColorRes != DEFAULT) {
             btn_positive.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(ctx, positiveColorRes)));
+            if (positiveTextColorRes == DEFAULT){
+                int light_or_dark = isColorDark(positiveColorRes) ? Color.WHITE : Color.BLACK;
+                btn_positive.setTextColor(light_or_dark);
+            }
         }
     }
 
 
-    // Setup Negative Button
+    /**
+     * Setup Negative Button
+     * @param negativeText
+     */
     private void changeNegativeText(String negativeText){
         if (negativeText != null){
             btn_negative.setVisibility(View.VISIBLE);
@@ -354,19 +468,26 @@ public class SuperDialog extends DialogFragment {
             }
         }
     }
-    private void changeNegativeTextColor(int negativeTextColorRes){
+    private void changeNegativeTextColor(@ColorRes int negativeTextColorRes){
         if (negativeTextColorRes != DEFAULT) {
             btn_negative.setTextColor(ContextCompat.getColor(ctx, negativeTextColorRes));
         }
     }
-    private void changeNegativeColor(int negativeColorRes){
+    private void changeNegativeColor(@ColorRes int negativeColorRes){
         if (negativeColorRes != DEFAULT) {
             btn_negative.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(ctx, negativeColorRes)));
+            if (negativeTextColorRes == DEFAULT){
+                int light_or_dark = isColorDark(negativeColorRes) ? Color.WHITE : Color.BLACK;
+                btn_negative.setTextColor(light_or_dark);
+            }
         }
     }
 
 
-    // Setup Cancel Button
+    /**
+     * Setup Cancel Button
+     * @param cancelText
+     */
     private void changeCancelText(String cancelText){
         if (cancelText != null){
             btn_cancel.setVisibility(View.VISIBLE);
@@ -398,18 +519,26 @@ public class SuperDialog extends DialogFragment {
             }
         }
     }
-    private void changeCancelTextColor(int cancelTextColorRes){
+    private void changeCancelTextColor(@ColorRes int cancelTextColorRes){
         if (cancelTextColorRes != DEFAULT) {
             btn_cancel.setTextColor(ContextCompat.getColor(ctx, cancelTextColorRes));
         }
     }
-    private void changeCancelColor(int cancelColorRes){
+    private void changeCancelColor(@ColorRes int cancelColorRes){
         if (cancelColorRes != DEFAULT) {
             btn_cancel.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(ctx, cancelColorRes)));
+            if (cancelTextColorRes == DEFAULT){
+                int light_or_dark = isColorDark(cancelColorRes) ? Color.WHITE : Color.BLACK;
+                btn_cancel.setTextColor(light_or_dark);
+            }
         }
     }
 
-    // Setup Title
+
+    /**
+     * Setup Title
+     * @param title
+     */
     private void changeTitle(String title){
         if (title != null){
             tv_title.setVisibility(View.VISIBLE);
@@ -428,11 +557,20 @@ public class SuperDialog extends DialogFragment {
         }
     }
 
-    // Setup Message or Content
+
+    /**
+     * Setup Message or Content
+     * @param message
+     */
     private void changeMessage(String message){
         if (message != null) {
-            tv_message.setVisibility(View.VISIBLE);
+            if (tv_message.getVisibility() != View.VISIBLE){
+                tv_message.setVisibility(View.VISIBLE);
+            }
+            tv_message.setIncludeFontPadding(true);
             tv_message.setText(message);
+
+            manageMessageScroll();
 
         } else {
             tv_message.setVisibility(View.GONE);
@@ -444,19 +582,23 @@ public class SuperDialog extends DialogFragment {
         }
     }
 
-    // Setup Icon
-    private void changeIconMode(int iconMode){
-        if (iconMode == CUSTOM_ICON){
+
+    /**
+     * Setup Icon
+     * @param iconMode
+     */
+    private void changeIconMode(IconMode iconMode){
+        if (iconMode == IconMode.CUSTOM_IMAGE || iconMode == IconMode.NO_ICON){
             ai_animatedIcon.setVisibility(View.GONE);
-            ai_animatedIcon.setMode(CUSTOM_ICON);
 
         } else {
             ai_animatedIcon.setVisibility(View.VISIBLE);
-            ai_animatedIcon.setMode(iconMode);
         }
+
+        ai_animatedIcon.setMode(iconMode);
     }
-    private void changeCustomIconRes(int customIconRes){
-        if (iconMode == CUSTOM_ICON) {
+    private void changeCustomIconRes(@DrawableRes int customIconRes){
+        if (iconMode == IconMode.CUSTOM_IMAGE) {
             if (customIconRes != DEFAULT) {
                 iv_icon.setVisibility(View.VISIBLE);
                 iv_icon.setImageResource(customIconRes);
@@ -465,7 +607,7 @@ public class SuperDialog extends DialogFragment {
     }
 
 
-    // Finally
+    // And Finally, to show the dialog
     public void show(FragmentManager fm){
         isShown = true;
         show(fm, "");

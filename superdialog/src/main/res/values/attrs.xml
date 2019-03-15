@@ -12,4 +12,19 @@
         <attr name="fel_size_left" format="dimension"/>
         <attr name="fel_size_right" format="dimension"/>
     </declare-styleable>
+
+
+    <declare-styleable name="SuperDialogTheme">
+        <attr name="sdt_background" format="color|integer"/>
+        <attr name="sdt_titleColor" format="color"/>
+        <attr name="sdt_messageColor" format="color"/>
+
+        <attr name="sdt_positiveButtonColor" format="color"/>
+        <attr name="sdt_negativeButtonColor" format="color"/>
+        <attr name="sdt_cancelButtonColor" format="color"/>
+
+        <attr name="sdt_ai_progressBackgroundColor" format="color"/>
+        <attr name="sdt_ai_progressStrokeColor" format="color"/>
+    </declare-styleable>
+
 </resources>

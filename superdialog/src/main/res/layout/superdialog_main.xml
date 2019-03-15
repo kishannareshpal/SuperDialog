@@ -12,7 +12,7 @@
         android:id="@+id/ll_root"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/superdialog_background"
+        android:background="?attr/sdt_background"
         android:paddingTop="18dp">
 
         <ImageView
@@ -52,12 +52,12 @@
             android:layout_marginEnd="24dp"
             android:layout_marginBottom="5dp"
             android:gravity="center"
-            android:text="Por favor selecione todas as opções antes de continuar."
             android:textAllCaps="false"
-            android:textColor="@color/md_black_1000"
+            android:textColor="?attr/sdt_titleColor"
             android:textSize="20sp"
             android:textStyle="bold"
             android:visibility="gone"
+            tools:text="Por favor selecione todas as opções antes de continuar."
             tools:visibility="visible" />
 
         <LinearLayout
@@ -94,7 +94,6 @@
 
                     <ScrollView
                         android:id="@+id/sv_scrollMessage"
-                        style="@style/SuperDialog.ScrollView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:scrollbarDefaultDelayBeforeFade="7000">
@@ -108,10 +107,11 @@
                             android:linksClickable="true"
                             android:paddingStart="24dp"
                             android:paddingEnd="24dp"
-                            android:textColor="@color/md_grey_700"
+                            android:textColor="?attr/sdt_messageColor"
                             android:textColorHighlight="@color/md_grey_200"
                             android:textColorLink="@color/secondary_green"
-                            android:textIsSelectable="true" />
+                            android:textIsSelectable="true"
+                            tools:text="O mais rapido possível" />
                     </ScrollView>
 
                 </com.kishannareshpal.superdialog.FadingEdgeLayout>
@@ -127,6 +127,21 @@
                 android:layout_marginBottom="5dp"
                 android:alpha="0"
                 android:background="@color/md_grey_200" />
+
+            <android.support.v7.widget.AppCompatCheckBox
+                android:id="@+id/accb_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:textColor="?attr/sdt_titleColor"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:buttonTint="?attr/sdt_titleColor"
+                tools:text="Do this too?" />
 
             <LinearLayout
                 android:id="@+id/actionButtons"
@@ -160,7 +175,7 @@
                         android:textSize="12sp"
                         android:typeface="normal"
                         android:visibility="gone"
-                        app:backgroundTint="@color/secondary_green"
+                        app:backgroundTint="?attr/sdt_negativeButtonColor"
                         app:cornerRadius="32dp"
                         tools:visibility="visible" />
 
@@ -183,7 +198,7 @@
                         android:textColor="@color/md_white_1000"
                         android:textSize="12sp"
                         android:visibility="gone"
-                        app:backgroundTint="@color/secondary_green"
+                        app:backgroundTint="?attr/sdt_positiveButtonColor"
                         app:cornerRadius="32dp"
                         tools:visibility="visible" />
 
@@ -200,10 +215,9 @@
                     android:layout_marginBottom="6dp"
                     android:text="Fechar"
                     android:textAllCaps="true"
-                    android:textColor="@color/md_grey_800"
                     android:textSize="12sp"
                     android:visibility="gone"
-                    app:backgroundTint="@color/md_grey_200"
+                    app:backgroundTint="?attr/sdt_cancelButtonColor"
                     app:cornerRadius="32dp"
                     tools:visibility="visible" />
 

@@ -2,18 +2,38 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="SuperDialog" parent="Theme.MaterialComponents.Light.Dialog">
+    <style name="SuperDialogTheme" parent="Theme.MaterialComponents.Light.Dialog">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorSecondary">@color/safety_blue</item>
-    </style>
 
-    <style name="SuperDialog.ScrollView" parent="SuperDialog">
         <item name="android:scrollbarStyle">outsideOverlay</item>
         <item name="android:scrollbars">vertical</item>
         <item name="android:scrollbarSize">2dp</item>
         <item name="android:scrollbarThumbVertical">@drawable/scrollbar_vertical_thumb</item>
+    </style>
+
+    <style name="SuperDialogTheme.Light" parent="SuperDialogTheme">
+        <item name="sdt_background">@drawable/superdialog_background_light</item>
+        <item name="sdt_titleColor">@color/md_black_1000</item>
+        <item name="sdt_messageColor">@color/md_grey_700</item>
+        <item name="sdt_positiveButtonColor">@color/secondary_green</item>
+        <item name="sdt_negativeButtonColor">@color/md_grey_200</item>
+        <item name="sdt_cancelButtonColor">@color/md_grey_200</item>
+
+        <item name="sdt_ai_progressBackgroundColor">@color/md_grey_100</item>
+    </style>
+
+    <style name="SuperDialogTheme.Night" parent="SuperDialogTheme">
+        <item name="sdt_background">@drawable/superdialog_background_night</item>
+        <item name="sdt_titleColor">@color/md_white_1000</item>
+        <item name="sdt_messageColor">@color/md_grey_400</item>
+        <item name="sdt_positiveButtonColor">@color/secondary_green</item>
+        <item name="sdt_negativeButtonColor">@color/safety_grey</item>
+        <item name="sdt_cancelButtonColor">@color/safety_grey</item>
+
+        <item name="sdt_ai_progressBackgroundColor">@color/safety_grey</item>
     </style>
 
 </resources>

@@ -5,7 +5,9 @@ import android.animation.FloatEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
@@ -42,7 +44,12 @@ public class AnimatedIcon extends View {
                 return;
 
             case INDEFINITE_PROGRESS:
-                main_paint.setColor(ContextCompat.getColor(ctx, R.color.md_grey_100));
+                @SuppressLint("CustomViewStyleable")
+                TypedArray ta = ctx.obtainStyledAttributes(R.styleable.SuperDialogTheme);
+                int ai_progressBackgroundColor = ta.getColor(R.styleable.SuperDialogTheme_sdt_ai_progressBackgroundColor, ContextCompat.getColor(ctx, R.color.md_grey_100));
+//        int ai_progressStrokeColor = ta.getColor(R.styleable.SuperDialogTheme_sdt_ai_progressStrokeColor, ContextCompat.getColor(ctx, R.color.secondary_green));
+                ta.recycle();
+                main_paint.setColor(ai_progressBackgroundColor);
                 stroke_paint.setColor(ContextCompat.getColor(ctx, R.color.secondary_green));
                 valueAnimator.start();
                 return;
@@ -88,29 +95,35 @@ public class AnimatedIcon extends View {
 
     public AnimatedIcon(Context context) {
         super(context);
-        init(context);
+        init(context, null);
     }
 
     public AnimatedIcon(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init(context);
+        init(context, attrs);
     }
 
-    public void init(Context ctx){
+    public void init(Context ctx, @Nullable AttributeSet attributeSet){
         this.ctx = ctx;
         oval = new RectF();
 
+
+
+        // This paint is mainly use for the WARNING, ERROR, DANGER icons
         fullIcon_paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         fullIcon_paint.setColor(ContextCompat.getColor(ctx, R.color.md_white_1000));
 
+        // This paint is for every icon background
         main_paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         main_paint.setColor(ContextCompat.getColor(ctx, R.color.md_grey_100));
 
+        // This paint is mainly used on the PROGRESS's rotating icon stroke
         stroke_paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         stroke_paint.setStrokeCap(Paint.Cap.ROUND);
         stroke_paint.setStyle(Paint.Style.STROKE);
         stroke_paint.setColor(ContextCompat.getColor(ctx, R.color.secondary_green));
 
+        // This paint is mainly use for the WARNING, ERROR, DANGER icon Background
         icon_paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         icon_paint.setStrokeCap(Paint.Cap.ROUND);
         icon_paint.setStyle(Paint.Style.STROKE);

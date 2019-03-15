@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -16,24 +17,26 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.ColorUtils;
+import android.support.v7.widget.AppCompatCheckBox;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
+import android.view.WindowManager;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Space;
 import android.widget.TextView;
 
-public class
-SuperDialog extends DialogFragment {
+public class SuperDialog extends DialogFragment {
 
     public static final int POSITIVE = 9;
     public static final int NEGATIVE = 10;
     public static final int CANCEL = 11;
-
 
     private static final int DEFAULT = -1;
 
@@ -49,6 +52,7 @@ SuperDialog extends DialogFragment {
     private ScrollView sv_scrollMessage;
     private FadingEdgeLayout fel_fadingEdge;
     private View v_scrollIndicator_top, v_scrollIndicator_bottom;
+    private AppCompatCheckBox accb_checkbox;
 
     // Setters
     private IconMode iconMode = IconMode.NO_ICON; // No Icon.
@@ -60,9 +64,12 @@ SuperDialog extends DialogFragment {
     @ColorRes private int positiveColorRes = DEFAULT; // Light Green.
     @ColorRes private int negativeColorRes = DEFAULT; // Light Green.
     @ColorRes private int cancelColorRes = DEFAULT; // Light Grey.
+    private boolean isCheckable; // if the dialog have a checkbox.
+    private boolean isChecked; // if the dialog's checkbox is checked.
     private boolean isScrollable;
     private boolean isAllCaps; // false.
     private boolean cancelable = true;
+    private String checkboxText; // null
     private String title; // null.
     private String message; // null.
     private String positiveText; // null.
@@ -78,7 +85,7 @@ SuperDialog extends DialogFragment {
     }
 
     public interface OnButtonClickListener {
-        void OnButtonClick(SuperDialog dialog, int whichButton);
+        void OnButtonClick(SuperDialog superDialog, int whichButton);
     }
 
     public SuperDialog iconMode(IconMode iconMode) {
@@ -89,6 +96,26 @@ SuperDialog extends DialogFragment {
     public SuperDialog cancelable(boolean cancelable){
         this.cancelable = cancelable;
         if (isShown) changeCancelable(cancelable);
+        return this;
+    }
+    public SuperDialog checkable(boolean isCheckable, boolean isCheckedByDefault){
+        this.isCheckable = isCheckable;
+        this.isChecked = isCheckedByDefault;
+        if (isShown) changeCheckable(isCheckable);
+        return this;
+    }
+    public SuperDialog checkboxState(boolean setChecked){
+        this.isChecked = setChecked;
+        if (isShown) {
+            changeCheckboxState(setChecked);
+        }
+        return this;
+    }
+    public SuperDialog checkboxText(String checkboxText){
+        this.checkboxText = checkboxText;
+        if (isShown) {
+            changeCheckboxText(checkboxText);
+        }
         return this;
     }
     public SuperDialog positiveText(String positiveText) {
@@ -145,7 +172,7 @@ SuperDialog extends DialogFragment {
         this.gravity = Gravity.CENTER;
         if (isShown) {
             changeMessage(message);
-            changeMessageGravity(Gravity.CENTER);
+            changeMessageGravity(this.gravity);
         }
         return this;
     }
@@ -194,6 +221,10 @@ SuperDialog extends DialogFragment {
         return this.isScrollable;
     }
 
+    public boolean isChecked() {
+        this.isChecked = accb_checkbox.isChecked();
+        return this.isChecked;
+    }
 
     /*
      * @source: https://stackoverflow.com/questions/14657490/how-to-properly-retain-a-dialogfragment-through-rotation
@@ -201,17 +232,25 @@ SuperDialog extends DialogFragment {
     @Override
     public void onDestroyView() {
         Dialog dialog = getDialog();
-        // handles https://code.google.com/p/android/issues/detail?id=17423
+        // handles https://code.google.com/p/android/issues/detail?id=17423 issue
         if (dialog != null && getRetainInstance()) {
             dialog.setDismissMessage(null);
         }
-        super.onDestroyView();
+
+        if (dialog != null && dialog.getWindow() != null){
+            dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+            super.onDestroyView();
+        }
     }
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        if (getActivity() != null){
+            getActivity().setTheme(SuperDialogConfiguration.getTheme());
+        }
+
         View view = inflater.inflate(R.layout.superdialog_main, container, false);
 
         // Init Utils
@@ -221,6 +260,8 @@ SuperDialog extends DialogFragment {
         // Set transparent background and remove stock title decoration views.. so the round corners bg shows.
         if (getDialog() != null && getDialog().getWindow() != null) {
             Window window = getDialog().getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND); // This flag is required to set otherwise the setDimAmount method will not show any effect
+            window.setDimAmount(0.7F); //0 for no dim to 1 for full dim
             window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             window.requestFeature(Window.FEATURE_NO_TITLE);
         }
@@ -238,7 +279,9 @@ SuperDialog extends DialogFragment {
         ai_animatedIcon          = view.findViewById(R.id.ai_animatedIcon);
         btn_negative             = view.findViewById(R.id.btn_negative);
         btn_cancel               = view.findViewById(R.id.btn_cancel);
+        accb_checkbox            = view.findViewById(R.id.accb_checkbox);
         space                    = view.findViewById(R.id.space);
+
 
         // Setup Icon
         changeIconMode(iconMode);
@@ -254,6 +297,10 @@ SuperDialog extends DialogFragment {
 
         // Add space between positive and negative button when both are visible.
         addSpaceBetweenButtons();
+
+        // Setup Checkbox
+        changeCheckable(isCheckable, isChecked);
+        changeCheckboxText(checkboxText);
 
         // Setup Positive Button
         changePositiveText(positiveText);
@@ -369,6 +416,35 @@ SuperDialog extends DialogFragment {
 
 
     /**
+     * Change Checkbox
+     * @param isCheckable
+     */
+    private void changeCheckable(boolean isCheckable){
+        if (isCheckable) {
+            accb_checkbox.setVisibility(View.VISIBLE);
+
+        } else {
+            accb_checkbox.setVisibility(View.GONE);
+        }
+    }
+    private void changeCheckable(boolean isCheckable, boolean isCheckedByDefault){
+        if (isCheckable) {
+            accb_checkbox.setVisibility(View.VISIBLE);
+            changeCheckboxState(isCheckedByDefault);
+
+        } else {
+            accb_checkbox.setVisibility(View.GONE);
+        }
+    }
+    private void changeCheckboxText(String checkboxText){
+        accb_checkbox.setText(checkboxText);
+    }
+    private void changeCheckboxState(boolean setChecked){
+        accb_checkbox.setChecked(setChecked);
+    }
+
+
+    /**
      * Setup Positive Button
      * @param positiveText
      */
@@ -416,12 +492,16 @@ SuperDialog extends DialogFragment {
         }
     }
     private void changePositiveColor(@ColorRes int positiveColorRes){
-        if (positiveColorRes != DEFAULT) {
-            btn_positive.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(ctx, positiveColorRes)));
-            if (positiveTextColorRes == DEFAULT){
-                int light_or_dark = isColorDark(positiveColorRes) ? Color.WHITE : Color.BLACK;
-                btn_positive.setTextColor(light_or_dark);
-            }
+        if (positiveColorRes == DEFAULT) {
+            TypedArray ta = ctx.obtainStyledAttributes(R.styleable.SuperDialogTheme);
+            positiveColorRes = ta.getResourceId(R.styleable.SuperDialogTheme_sdt_positiveButtonColor, ContextCompat.getColor(ctx, R.color.secondary_green));
+            ta.recycle();
+        }
+
+        btn_positive.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(ctx, positiveColorRes)));
+        if (positiveTextColorRes == DEFAULT){
+            int light_or_dark = isColorDark(positiveColorRes) ? Color.WHITE : Color.BLACK;
+            btn_positive.setTextColor(light_or_dark);
         }
     }
 
@@ -452,6 +532,7 @@ SuperDialog extends DialogFragment {
                     @Override
                     public void onClick(View v) {
                         onNegative.OnButtonClick(superDialog, NEGATIVE);
+
                         if (cancelable) {
                             getDialog().dismiss();
                         }
@@ -474,12 +555,16 @@ SuperDialog extends DialogFragment {
         }
     }
     private void changeNegativeColor(@ColorRes int negativeColorRes){
-        if (negativeColorRes != DEFAULT) {
-            btn_negative.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(ctx, negativeColorRes)));
-            if (negativeTextColorRes == DEFAULT){
-                int light_or_dark = isColorDark(negativeColorRes) ? Color.WHITE : Color.BLACK;
-                btn_negative.setTextColor(light_or_dark);
-            }
+        if (negativeColorRes == DEFAULT) {
+            TypedArray ta = ctx.obtainStyledAttributes(R.styleable.SuperDialogTheme);
+            negativeColorRes = ta.getResourceId(R.styleable.SuperDialogTheme_sdt_negativeButtonColor, ContextCompat.getColor(ctx, R.color.secondary_green));
+            ta.recycle();
+        }
+
+        btn_negative.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(ctx, negativeColorRes)));
+        if (negativeTextColorRes == DEFAULT){
+            int light_or_dark = isColorDark(negativeColorRes) ? Color.WHITE : Color.BLACK;
+            btn_negative.setTextColor(light_or_dark);
         }
     }
 
@@ -503,6 +588,7 @@ SuperDialog extends DialogFragment {
                     @Override
                     public void onClick(View v) {
                         onCancel.OnButtonClick(superDialog, CANCEL);
+
                         if (cancelable) {
                             getDialog().dismiss();
                         }
@@ -525,13 +611,19 @@ SuperDialog extends DialogFragment {
         }
     }
     private void changeCancelColor(@ColorRes int cancelColorRes){
-        if (cancelColorRes != DEFAULT) {
-            btn_cancel.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(ctx, cancelColorRes)));
-            if (cancelTextColorRes == DEFAULT){
-                int light_or_dark = isColorDark(cancelColorRes) ? Color.WHITE : Color.BLACK;
-                btn_cancel.setTextColor(light_or_dark);
-            }
+        if (cancelColorRes == DEFAULT) {
+            TypedArray ta = ctx.obtainStyledAttributes(R.styleable.SuperDialogTheme);
+            cancelColorRes = ta.getResourceId(R.styleable.SuperDialogTheme_sdt_cancelButtonColor, ContextCompat.getColor(ctx, R.color.secondary_green));
+            ta.recycle();
         }
+
+
+        btn_cancel.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(ctx, cancelColorRes)));
+        if (cancelTextColorRes == DEFAULT){
+            int light_or_dark = isColorDark(cancelColorRes) ? Color.WHITE : Color.BLACK;
+            btn_cancel.setTextColor(light_or_dark);
+        }
+
     }
 
 

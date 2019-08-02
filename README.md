@@ -31,7 +31,7 @@ dependencies {
    <dependency>
      <groupId>com.kishannareshpal</groupId>
      <artifactId>superdialog</artifactId>
-     <version>1.0.0</version>
+     <version>1.2</version>
      <type>pom</type>
    </dependency>
    ```

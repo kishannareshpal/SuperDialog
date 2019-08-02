@@ -16,7 +16,7 @@ To begin using **SuperDialog** in your projects just add the dependecy via *Grad
 ```groovy
 dependencies {
     // ...
-    implementation 'com.kishannareshpal:superdialog:1.0.1'
+    implementation 'com.kishannareshpal:superdialog:1.2'
     // ...
 }
 ```

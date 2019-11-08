@@ -1,7 +1,7 @@
 # SuperDialog
 A very cool looking android dialog library.
 
-[![API 14](https://img.shields.io/badge/API-14%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=14)[![Download](https://api.bintray.com/packages/kishannareshpal/maven/superdialog/images/download.svg)](https://bintray.com/kishannareshpal/maven/horizontalbarchartview/_latestVersion)
+[![API 14](https://img.shields.io/badge/API-14%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=14)[![Download](https://api.bintray.com/packages/kishannareshpal/maven/superdialog/images/download.svg)](https://bintray.com/kishannareshpal/maven/superdialog/_latestVersion)
 
 
 
@@ -16,7 +16,7 @@ To begin using **SuperDialog** in your projects just add the dependecy via *Grad
 ```groovy
 dependencies {
     // ...
-    implementation 'com.kishannareshpal:superdialog:1.2'
+    implementation 'com.kishannareshpal:superdialog:1.1.6'
     // ...
 }
 ```
@@ -31,7 +31,7 @@ dependencies {
    <dependency>
      <groupId>com.kishannareshpal</groupId>
      <artifactId>superdialog</artifactId>
-     <version>1.2</version>
+     <version>1.1.6</version>
      <type>pom</type>
    </dependency>
    ```

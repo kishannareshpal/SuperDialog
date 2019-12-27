@@ -1,6 +1,6 @@
 package com.kishannareshpal.superdialog;
 
-import android.support.annotation.StyleRes;
+import androidx.annotation.StyleRes;
 
 public class SuperDialogConfiguration {
     static @StyleRes int SUPERDIALOG_THEME = R.style.SuperDialogTheme_Light;

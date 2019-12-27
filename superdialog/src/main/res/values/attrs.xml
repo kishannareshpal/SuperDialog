@@ -2,29 +2,33 @@
 <resources>
     <declare-styleable name="FadingEdgeLayout">
         <attr name="fel_edge" format="integer">
-            <flag name="top" value="1"/>
+            <flag name="top"    value="1"/>
             <flag name="bottom" value="2"/>
-            <flag name="left" value="4"/>
-            <flag name="right" value="8"/>
+            <flag name="left"   value="4"/>
+            <flag name="right"  value="8"/>
         </attr>
-        <attr name="fel_size_top" format="dimension"/>
+        <attr name="fel_size_top"    format="dimension"/>
         <attr name="fel_size_bottom" format="dimension"/>
-        <attr name="fel_size_left" format="dimension"/>
-        <attr name="fel_size_right" format="dimension"/>
+        <attr name="fel_size_left"   format="dimension"/>
+        <attr name="fel_size_right"  format="dimension"/>
     </declare-styleable>
 
 
     <declare-styleable name="SuperDialogTheme">
-        <attr name="sdt_background" format="color|integer"/>
-        <attr name="sdt_titleColor" format="color"/>
+        <attr name="sdt_background"   format="color|integer"/>
+        <attr name="sdt_titleColor"   format="color"/>
         <attr name="sdt_messageColor" format="color"/>
 
         <attr name="sdt_positiveButtonColor" format="color"/>
         <attr name="sdt_negativeButtonColor" format="color"/>
-        <attr name="sdt_cancelButtonColor" format="color"/>
+        <attr name="sdt_cancelButtonColor"   format="color"/>
+
+        <attr name="sdt_promptTextColor"       format="color"/>
+        <attr name="sdt_promptBoxOutlineColor" format="color"/>
+        <attr name="sdt_promptHintTextColor"   format="color"/>
 
         <attr name="sdt_ai_progressBackgroundColor" format="color"/>
-        <attr name="sdt_ai_progressStrokeColor" format="color"/>
+        <attr name="sdt_ai_progressStrokeColor"     format="color"/>
     </declare-styleable>
 
 </resources>

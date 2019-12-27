@@ -14,25 +14,39 @@
         <item name="android:scrollbarThumbVertical">@drawable/scrollbar_vertical_thumb</item>
     </style>
 
+    <style name="SuperDialogTheme.HelperTextAppearance">
+        <item name="android:textColor">?attr/sdt_promptTextColor</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="SuperDialogTheme.HintTextAppearance">
+        <item name="android:textColor">?attr/sdt_promptHintTextColor</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
     <style name="SuperDialogTheme.Light" parent="SuperDialogTheme">
         <item name="sdt_background">@drawable/superdialog_background_light</item>
         <item name="sdt_titleColor">@color/md_black_1000</item>
         <item name="sdt_messageColor">@color/md_grey_700</item>
+        <item name="sdt_promptTextColor">@color/md_black_1000</item>
+        <item name="sdt_promptHintTextColor">@color/md_grey_600</item>
         <item name="sdt_positiveButtonColor">@color/secondary_green</item>
         <item name="sdt_negativeButtonColor">@color/md_grey_200</item>
         <item name="sdt_cancelButtonColor">@color/md_grey_200</item>
-
         <item name="sdt_ai_progressBackgroundColor">@color/md_grey_100</item>
+        <item name="sdt_promptBoxOutlineColor">@color/md_black_1000</item>
     </style>
 
     <style name="SuperDialogTheme.Night" parent="SuperDialogTheme">
         <item name="sdt_background">@drawable/superdialog_background_night</item>
         <item name="sdt_titleColor">@color/md_white_1000</item>
         <item name="sdt_messageColor">@color/md_grey_400</item>
+        <item name="sdt_promptTextColor">@color/md_white_1000</item>
+        <item name="sdt_promptHintTextColor">@color/md_grey_400</item>
         <item name="sdt_positiveButtonColor">@color/secondary_green</item>
         <item name="sdt_negativeButtonColor">@color/safety_grey</item>
         <item name="sdt_cancelButtonColor">@color/safety_grey</item>
-
+        <item name="sdt_promptBoxOutlineColor">@color/md_grey_700</item>
         <item name="sdt_ai_progressBackgroundColor">@color/safety_grey</item>
     </style>
 

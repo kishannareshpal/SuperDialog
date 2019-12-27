@@ -8,16 +8,21 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.annotation.ColorRes;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.button.MaterialButton;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.ColorUtils;
-import android.support.v7.widget.AppCompatCheckBox;
+import androidx.annotation.ColorRes;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.ColorUtils;
+import androidx.appcompat.widget.AppCompatCheckBox;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,8 +30,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.Space;
@@ -53,6 +56,8 @@ public class SuperDialog extends DialogFragment {
     private FadingEdgeLayout fel_fadingEdge;
     private View v_scrollIndicator_top, v_scrollIndicator_bottom;
     private AppCompatCheckBox accb_checkbox;
+    private TextInputEditText et_text;
+    private TextInputLayout til;
 
     // Setters
     private IconMode iconMode = IconMode.NO_ICON; // No Icon.
@@ -68,6 +73,7 @@ public class SuperDialog extends DialogFragment {
     private boolean isChecked; // if the dialog's checkbox is checked.
     private boolean isScrollable;
     private boolean isAllCaps; // false.
+    private boolean isPrompt; // false
     private boolean cancelable = true;
     private String checkboxText; // null
     private String title; // null.
@@ -77,6 +83,17 @@ public class SuperDialog extends DialogFragment {
     private String cancelText; // null.
     private Space space; // View.VISIBLE.
     private OnButtonClickListener onPositive, onNegative, onCancel;
+    private OnTextInputListener onTextInputListener;
+
+    private String promptHint;
+    private String promptText;
+    private String promptHelperText;
+    private String promptErrorText;
+    @ColorRes int promptHelperTextColor;
+    @ColorRes int promptErrorTextColor;
+    private int promptLines = 1; // number of lines
+    private boolean isPromptHelperEnabled; // false
+    private boolean isPromptErrorEnabled; // false
 
     @Override
     public void onDismiss(DialogInterface dialog) {
@@ -86,6 +103,10 @@ public class SuperDialog extends DialogFragment {
 
     public interface OnButtonClickListener {
         void OnButtonClick(SuperDialog superDialog, int whichButton);
+    }
+
+    public interface OnTextInputListener {
+        void OnTextInput(SuperDialog superDialog, String text);
     }
 
     public SuperDialog iconMode(IconMode iconMode) {
@@ -217,6 +238,97 @@ public class SuperDialog extends DialogFragment {
         return this;
     }
 
+
+    public SuperDialog prompt() {
+        this.isPrompt = true;
+
+        if (isShown) {
+            changePrompt(true, promptHint, promptText, promptLines);
+        }
+        return this;
+    }
+
+    public SuperDialog prompt(boolean isPrompt) {
+        this.isPrompt = isPrompt;
+
+        if (isShown) {
+            changePrompt(isPrompt, promptHint, promptText, promptLines);
+        }
+        return this;
+    }
+
+    public SuperDialog prompt(boolean isPrompt, String hint, String defaultText, int lines) {
+        this.isPrompt = isPrompt;
+        this.promptHint = hint;
+        this.promptText = defaultText;
+        if (lines > 0) this.promptLines = lines;
+
+        if (isShown) {
+            changePrompt(isPrompt, hint, defaultText, lines);
+        }
+        return this;
+    }
+
+    public SuperDialog setPromptToFail(String errorText) {
+        this.promptErrorText = errorText;
+
+        if (isShown) {
+            changePromptToFail(errorText);
+        }
+        return this;
+    }
+
+    public SuperDialog setPromptToHelp(String helperText) {
+        this.promptHelperText = helperText;
+
+        if (isShown) {
+            changePromptHelper(helperText);
+        }
+        return this;
+    }
+
+    public SuperDialog resetPrompt() {
+        if (isShown) {
+            changePromptBackToNormal(false);
+        }
+        return this;
+    }
+
+    public SuperDialog resetPrompt(boolean errorsToo) {
+        if (isShown) {
+            changePromptBackToNormal(errorsToo);
+        }
+        return this;
+    }
+
+    public SuperDialog promptHelperTextColor(@ColorRes int promptHelperTextColor) {
+        this.promptHelperTextColor = promptErrorTextColor;
+        if (isShown && ctx != null) changePromptHelperTextColor(promptHelperTextColor);
+        return this;
+    }
+
+
+    public void clearPromptText() {
+        if (isShown) {
+            et_text.setText(null);
+        }
+    }
+
+    public String getPromptText() {
+        Editable et = et_text.getText();
+        return (et != null) ? et.toString() : null;
+    }
+
+
+    public SuperDialog onPromptTextChanged(OnTextInputListener onTextInputListener) {
+        this.onTextInputListener = onTextInputListener;
+        if (isShown) {
+            changeOnPromptTextChanged(onTextInputListener);
+        }
+        return this;
+    }
+
+
     public boolean isScrollable() {
         return this.isScrollable;
     }
@@ -268,6 +380,8 @@ public class SuperDialog extends DialogFragment {
         this.setRetainInstance(true);
 
         // INIT COMPONENTS
+        til                      = view.findViewById(R.id.til);
+        et_text                  = view.findViewById(R.id.et_text);
         fel_fadingEdge           = view.findViewById(R.id.fel_fadingEdge);
         sv_scrollMessage         = view.findViewById(R.id.sv_scrollMessage);
         v_scrollIndicator_top    = view.findViewById(R.id.v_scrollIndicator_top);
@@ -294,6 +408,10 @@ public class SuperDialog extends DialogFragment {
         // Setup Message (a.k.a. Content)
         changeMessage(message);
         changeMessageGravity(gravity);
+
+        // Setup Prompt
+        changePrompt(isPrompt, promptHint, promptText, promptLines);
+        changeOnPromptTextChanged(onTextInputListener);
 
         // Add space between positive and negative button when both are visible.
         addSpaceBetweenButtons();
@@ -407,6 +525,127 @@ public class SuperDialog extends DialogFragment {
 
 
     /**
+     * Setup Prompt
+     */
+    private void changePrompt(boolean isPrompt, String hint, String defaultText, int lines) {
+        if (isPrompt) {
+            // show the prompt area.
+            til.setVisibility(View.VISIBLE);
+
+            // set the hint if available.
+            if (hint != null) {
+                til.setHint(hint);
+            } else {
+                et_text.setHint(null);
+            }
+
+            // set default text if available.
+            if (defaultText != null) {
+                et_text.setText(defaultText);
+            } else {
+                et_text.setText(null);
+            }
+
+            // set default max lines
+            if (lines <= 1) {
+                lines = 1;
+                et_text.setSingleLine(true);
+            }
+            et_text.setLines(lines);
+
+        } else {
+            // hide the prompt area.
+            til.setVisibility(View.GONE);
+        }
+    }
+
+    private void changePromptToFail(String errorText) {
+        if (errorText != null) {
+            this.isPromptErrorEnabled = true;
+            til.setHelperTextEnabled(false); // hide the helper text, otherwise the layout would get messy. See Material Guidelines on EditText
+            til.setErrorEnabled(true);
+            til.setError(errorText);
+
+        } else {
+            this.isPromptErrorEnabled = false;
+            til.setErrorEnabled(false);
+
+            if (isPromptHelperEnabled) {
+                til.setHelperTextEnabled(true);
+            }
+        }
+    }
+
+    private void changePromptHelper(String helperText) {
+        if (helperText != null) {
+            this.isPromptHelperEnabled = true;
+            til.setErrorEnabled(false); // hide the error text, otherwise the layout would get messy. See Material Guidelines on EditText
+            til.setHelperTextEnabled(true);
+            til.setHelperText(helperText);
+
+        } else {
+            this.promptHelperText = null;
+            this.isPromptHelperEnabled = false;
+            til.setHelperTextEnabled(false);
+        }
+    }
+
+    private void changePromptBackToNormal(boolean errorsToo) {
+        if (isPromptErrorEnabled) {
+            this.isPromptErrorEnabled = false;
+            til.setErrorEnabled(false);
+
+            if (isPromptHelperEnabled) {
+                til.setHelperText(promptHelperText);
+                til.setHelperTextEnabled(true);
+            }
+
+            if (errorsToo) {
+                this.promptHelperText = null;
+                this.promptErrorText  = null;
+                til.setHelperText(null);
+                til.setError(null);
+            }
+
+        } else if (errorsToo) {
+            this.promptHelperText = null;
+            this.promptErrorText  = null;
+            til.setHelperText(null);
+            til.setError(null);
+        }
+    }
+
+    private void changePromptHelperTextColor(@ColorRes int promptHelperTextColor) {
+        if (promptHelperTextColor != DEFAULT) {
+            til.setHelperTextColor(ColorStateList.valueOf(ContextCompat.getColor(ctx, promptHelperTextColor)));
+        }
+    }
+
+    private void changeOnPromptTextChanged(final OnTextInputListener onTextInputListener) {
+        if (onTextInputListener != null) {
+            et_text.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    // do nothin..
+                }
+
+                @Override
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    // do nothin..
+                }
+
+                @Override
+                public void afterTextChanged(Editable editable) {
+                    onTextInputListener.OnTextInput(superDialog, editable.toString());
+                }
+            });
+        } else {
+            et_text.addTextChangedListener(null);
+        }
+    }
+
+
+    /**
      * Setup Cancelable
      * @param cancelable
      */
@@ -416,7 +655,7 @@ public class SuperDialog extends DialogFragment {
 
 
     /**
-     * Change Checkbox
+     * Setup Checkbox
      * @param isCheckable
      */
     private void changeCheckable(boolean isCheckable){
@@ -588,7 +827,6 @@ public class SuperDialog extends DialogFragment {
                     @Override
                     public void onClick(View v) {
                         onCancel.OnButtonClick(superDialog, CANCEL);
-
                         if (cancelable) {
                             getDialog().dismiss();
                         }

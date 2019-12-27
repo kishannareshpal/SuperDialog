@@ -26,7 +26,6 @@
             android:layout_marginBottom="5dp"
             android:scaleType="fitXY"
             android:visibility="gone"
-            tools:src="@tools:sample/avatars[8]"
             tools:visibility="visible" />
 
         <com.kishannareshpal.superdialog.AnimatedIcon
@@ -37,7 +36,6 @@
             android:layout_centerHorizontal="true"
             android:layout_gravity="center"
             android:layout_marginBottom="5dp"
-            android:layout_weight="1"
             android:visibility="gone"
             tools:visibility="visible" />
 
@@ -113,8 +111,30 @@
                             android:textIsSelectable="true"
                             tools:text="O mais rapido possível" />
                     </ScrollView>
-
                 </com.kishannareshpal.superdialog.FadingEdgeLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    android:id="@+id/til"
+                    android:visibility="gone"
+                    android:layout_below="@id/fel_fadingEdge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColorHint="?attr/sdt_promptHintTextColor"
+                    android:layout_marginEnd="24dp"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginRight="24dp"
+                    android:layout_marginBottom="5dp"
+                    app:helperTextTextAppearance="@style/SuperDialogTheme.HelperTextAppearance">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_text"
+                        android:textColor="?attr/sdt_promptTextColor"
+                        android:textColorHint="?attr/sdt_promptHintTextColor"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </com.google.android.material.textfield.TextInputLayout>
 
             </RelativeLayout>
 
@@ -122,13 +142,12 @@
                 android:id="@+id/v_scrollIndicator_bottom"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_below="@id/fel_fadingEdge"
                 android:layout_marginTop="-1dp"
                 android:layout_marginBottom="5dp"
                 android:alpha="0"
                 android:background="@color/md_grey_200" />
 
-            <android.support.v7.widget.AppCompatCheckBox
+            <androidx.appcompat.widget.AppCompatCheckBox
                 android:id="@+id/accb_checkbox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -162,7 +181,7 @@
                     android:orientation="horizontal"
                     tools:visibility="visible">
 
-                    <android.support.design.button.MaterialButton
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_negative"
                         style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
                         android:layout_width="wrap_content"
@@ -186,7 +205,7 @@
                         android:visibility="gone"
                         tools:visibility="visible" />
 
-                    <android.support.design.button.MaterialButton
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btn_positive"
                         style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
                         android:layout_width="wrap_content"
@@ -204,7 +223,7 @@
 
                 </LinearLayout>
 
-                <android.support.design.button.MaterialButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_cancel"
                     style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
                     android:layout_width="wrap_content"

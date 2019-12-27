@@ -3,6 +3,7 @@ apply plugin: 'com.android.application'
 // How to publish your own library to JCenter
 // https://medium.com/@anitaa_1990/6-easy-steps-to-upload-your-android-library-to-bintray-jcenter-59e6030c8890
 
+// Make sure to use com.android.tools.build:gradle:3.4.0 with com.novoda:bintray-release:0.9.2 in Project build.gradle
 // Make sure you user JDK 11 or less. JDK 13 is failing for now 26.12.19 with "General error during semantic analysis: Unsupported class file major version 57" error message.
 
 // execute "./gradlew clean build bintrayUpload -PbintrayUser={userid_bintray} -PbintrayKey={apikey_bintray} -PdryRun=false"
@@ -19,7 +20,7 @@ android {
         minSdkVersion 17
         targetSdkVersion 29
         versionCode 1
-        versionName "v1.3"
+        versionName "v1.3.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled = true
     }
@@ -42,5 +43,5 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
-//    implementation project(':superdialog')
+    implementation project(':superdialog')
 }

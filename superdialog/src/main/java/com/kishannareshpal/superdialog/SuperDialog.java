@@ -626,12 +626,12 @@ public class SuperDialog extends DialogFragment {
             et_text.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    // do nothin..
+                    // do nothing..
                 }
 
                 @Override
                 public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    // do nothin..
+                    // do nothing..
                 }
 
                 @Override
@@ -639,8 +639,6 @@ public class SuperDialog extends DialogFragment {
                     onTextInputListener.OnTextInput(superDialog, editable.toString());
                 }
             });
-        } else {
-            et_text.addTextChangedListener(null);
         }
     }
 

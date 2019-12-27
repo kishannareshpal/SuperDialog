@@ -5,7 +5,7 @@ apply plugin: 'com.novoda.bintray-release'
 publish {
     def groupProjectID = 'com.kishannareshpal'
     def artifactProjectID = 'superdialog'
-    def publishVersionID = '1.3'
+    def publishVersionID = '1.3.1'
 
     userOrg = 'kishannareshpal'
     repoName = 'maven'
@@ -22,7 +22,7 @@ android {
         minSdkVersion 17
         targetSdkVersion 28
         versionCode 1
-        versionName "v1.3"
+        versionName "v1.3.1"
         multiDexEnabled = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 

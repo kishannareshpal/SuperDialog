@@ -1,6 +1,9 @@
-package com.kishannareshpal.superdialog;
+package com.kishannareshpal.sample;
 
 import android.app.Application;
+
+import com.kishannareshpal.superdialog.R;
+import com.kishannareshpal.superdialog.SuperDialogConfiguration;
 
 public class MyApplication extends Application {
 

@@ -1,1 +1,2 @@
-include ':superdialog'
+include ':superdialog', ':sample'
+project(':sample').projectDir = new File('app')

@@ -92,8 +92,8 @@ public class SuperDialog extends DialogFragment {
     private String promptHelperText;
     private String promptErrorText;
     private int promptTextInputType = InputType.TYPE_CLASS_TEXT;
-    @ColorRes int promptHelperTextColor;
-    @ColorRes int promptErrorTextColor;
+    @ColorRes int promptHelperTextColor = DEFAULT;
+    @ColorRes int promptErrorTextColor = DEFAULT;
     private int promptLines = 1; // number of lines
     private int promptMaxTextLength = 90;
     private boolean isPromptTextCountEnabled; // false;

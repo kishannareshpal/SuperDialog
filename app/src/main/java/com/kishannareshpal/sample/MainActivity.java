@@ -1,6 +1,7 @@
 package com.kishannareshpal.sample;
 
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
                 new SuperDialog()
                         .title("Outra disciplina")
                         .prompt(true, "disciplina...", null, 1)
+                        .promptTextInputType(InputType.TYPE_CLASS_NUMBER)
                         .positiveText("Confirmar")
                         .cancelable(false)
                         .onPositive(new SuperDialog.OnButtonClickListener() {

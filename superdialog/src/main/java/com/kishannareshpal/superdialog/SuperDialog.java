@@ -21,6 +21,8 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
 import androidx.appcompat.widget.AppCompatCheckBox;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
@@ -89,9 +91,12 @@ public class SuperDialog extends DialogFragment {
     private String promptText;
     private String promptHelperText;
     private String promptErrorText;
+    private int promptTextInputType = InputType.TYPE_CLASS_TEXT;
     @ColorRes int promptHelperTextColor;
     @ColorRes int promptErrorTextColor;
     private int promptLines = 1; // number of lines
+    private int promptMaxTextLength = 90;
+    private boolean isPromptTextCountEnabled; // false;
     private boolean isPromptHelperEnabled; // false
     private boolean isPromptErrorEnabled; // false
 
@@ -257,6 +262,29 @@ public class SuperDialog extends DialogFragment {
         return this;
     }
 
+    /**
+     * Set the text input type of the prompt
+     *
+     * @param inputType must be a constant from InputType;
+     * @return
+     */
+    public SuperDialog promptTextInputType(int inputType) {
+        this.promptTextInputType = inputType;
+        if (isShown) {
+            changePromptTextInputType(inputType);
+        }
+
+        return this;
+    }
+
+    public SuperDialog promptMaxTextLength(int maxTextLength) {
+        this.promptMaxTextLength = maxTextLength;
+        if (isShown) {
+            changePromptMaxTextLength(maxTextLength);
+        }
+        return this;
+    }
+
     public SuperDialog prompt(boolean isPrompt, String hint, String defaultText, int lines) {
         this.isPrompt = isPrompt;
         this.promptHint = hint;
@@ -396,6 +424,8 @@ public class SuperDialog extends DialogFragment {
         accb_checkbox            = view.findViewById(R.id.accb_checkbox);
         space                    = view.findViewById(R.id.space);
 
+        // Setup Cancelable
+        changeCancelable(cancelable);
 
         // Setup Icon
         changeIconMode(iconMode);
@@ -412,10 +442,12 @@ public class SuperDialog extends DialogFragment {
         // Setup Prompt
         changePrompt(isPrompt, promptHint, promptText, promptLines);
         changeOnPromptTextChanged(onTextInputListener);
+        changePromptTextInputType(promptTextInputType);
+        changePromptMaxTextLength(promptMaxTextLength);
+        changePromptHelperTextColor(promptHelperTextColor);
 
         // Add space between positive and negative button when both are visible.
         addSpaceBetweenButtons();
-        changeCancelable(cancelable);
 
         // Setup Checkbox
         changeCheckable(isCheckable, isChecked);
@@ -641,6 +673,16 @@ public class SuperDialog extends DialogFragment {
                 }
             });
         }
+    }
+
+    private void changePromptTextInputType(int inputType) {
+        et_text.setInputType(inputType);
+    }
+
+    private void changePromptMaxTextLength(int maxTextLength) {
+        et_text.setFilters(new InputFilter[]{
+                new InputFilter.LengthFilter(maxTextLength),
+        });
     }
 
 

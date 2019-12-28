@@ -415,6 +415,7 @@ public class SuperDialog extends DialogFragment {
 
         // Add space between positive and negative button when both are visible.
         addSpaceBetweenButtons();
+        changeCancelable(cancelable);
 
         // Setup Checkbox
         changeCheckable(isCheckable, isChecked);

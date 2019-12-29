@@ -14,6 +14,17 @@
         <item name="android:scrollbarThumbVertical">@drawable/scrollbar_vertical_thumb</item>
     </style>
 
+    <style name="SuperDialogTheme.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="hintTextAppearance">@style/SuperDialogTheme.HintTextAppearanceMatchPrimary</item>
+        <item name="boxStrokeColor">?attr/colorPrimary</item>
+<!--        <item name="boxStrokeWidth">2dp</item>-->
+    </style>
+
+    <style name="SuperDialogTheme.HintTextAppearanceMatchPrimary">
+        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
     <style name="SuperDialogTheme.HelperTextAppearance">
         <item name="android:textColor">?attr/sdt_promptTextColor</item>
         <item name="android:textSize">12sp</item>

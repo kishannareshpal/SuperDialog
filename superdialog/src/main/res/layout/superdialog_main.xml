@@ -114,7 +114,7 @@
                 </com.kishannareshpal.superdialog.FadingEdgeLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                    style="@style/SuperDialogTheme.TextInputLayout"
                     android:id="@+id/til"
                     android:visibility="gone"
                     android:layout_below="@id/fel_fadingEdge"

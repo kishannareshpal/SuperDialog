@@ -33,13 +33,9 @@ public class MainActivity extends AppCompatActivity {
                         .prompt(true, "disciplina...", null, 1)
                         .promptTextInputType(InputType.TYPE_CLASS_NUMBER)
                         .positiveText("Confirmar")
-                        .cancelable(false)
-                        .onPositive(new SuperDialog.OnButtonClickListener() {
-                            @Override
-                            public void OnButtonClick(SuperDialog sd, int whichButton) {
-                                String pt = sd.getPromptText();
-                                sd.setPromptToFail("Hello");
-                            }
+                        .onPositive((sd, whichButton) -> {
+                            String pt = sd.getPromptText();
+                            sd.setPromptToFail("Hello");
                         })
                         .negativeText("hello")
                         .onNegative(new SuperDialog.OnButtonClickListener() {

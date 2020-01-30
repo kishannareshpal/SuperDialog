@@ -107,8 +107,6 @@ public class AnimatedIcon extends View {
         this.ctx = ctx;
         oval = new RectF();
 
-
-
         // This paint is mainly use for the WARNING, ERROR, DANGER icons
         fullIcon_paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         fullIcon_paint.setColor(ContextCompat.getColor(ctx, R.color.md_white_1000));

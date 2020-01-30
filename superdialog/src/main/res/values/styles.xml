@@ -15,6 +15,7 @@
     </style>
 
     <style name="SuperDialogTheme.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
         <item name="hintTextAppearance">@style/SuperDialogTheme.HintTextAppearanceMatchPrimary</item>
         <item name="boxStrokeColor">?attr/colorPrimary</item>
 <!--        <item name="boxStrokeWidth">2dp</item>-->

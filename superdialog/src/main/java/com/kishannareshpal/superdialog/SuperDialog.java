@@ -12,6 +12,7 @@ import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -113,6 +114,7 @@ public class SuperDialog extends DialogFragment {
     public interface OnTextInputListener {
         void OnTextInput(SuperDialog superDialog, String text);
     }
+
 
     public SuperDialog iconMode(IconMode iconMode) {
         this.iconMode = iconMode;
@@ -335,7 +337,6 @@ public class SuperDialog extends DialogFragment {
         return this;
     }
 
-
     public void clearPromptText() {
         if (isShown) {
             et_text.setText(null);
@@ -346,7 +347,6 @@ public class SuperDialog extends DialogFragment {
         Editable et = et_text.getText();
         return (et != null) ? et.toString() : null;
     }
-
 
     public SuperDialog onPromptTextChanged(OnTextInputListener onTextInputListener) {
         this.onTextInputListener = onTextInputListener;
@@ -366,9 +366,8 @@ public class SuperDialog extends DialogFragment {
         return this.isChecked;
     }
 
-    /*
-     * @source: https://stackoverflow.com/questions/14657490/how-to-properly-retain-a-dialogfragment-through-rotation
-     */
+    /**
+     *  @source: https://stackoverflow.com/questions/14657490/how-to-properly-retain-a-dialogfragment-through-rotatio */
     @Override
     public void onDestroyView() {
         Dialog dialog = getDialog();
@@ -383,20 +382,28 @@ public class SuperDialog extends DialogFragment {
         }
     }
 
+    // getContext() will always be not null between onAttach() and onDetach()
+    // @src: https://stackoverflow.com/a/48688603/7493547
+    @Override
+    public void onAttach(@NonNull Context ctx) {
+        super.onAttach(ctx);
+        this.ctx = ctx;
+        this.superDialog = this;
+        // set the theme
+        ctx.setTheme(SuperDialogConfiguration.getTheme());
+    }
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (getActivity() != null){
-            getActivity().setTheme(SuperDialogConfiguration.getTheme());
-        }
-
         View view = inflater.inflate(R.layout.superdialog_main, container, false);
-
-        // Init Utils
-        this.ctx = getActivity();
-        this.superDialog = this;
-
         // Set transparent background and remove stock title decoration views.. so the round corners bg shows.
         if (getDialog() != null && getDialog().getWindow() != null) {
             Window window = getDialog().getWindow();
@@ -551,6 +558,7 @@ public class SuperDialog extends DialogFragment {
      *  Setup Space between buttons
      */
     private void addSpaceBetweenButtons(){
+        if (space != null) return; // prevent null pointer exceptions
         if (negativeText != null && positiveText != null){
             space.setVisibility(View.VISIBLE);
         }
@@ -561,6 +569,7 @@ public class SuperDialog extends DialogFragment {
      * Setup Prompt
      */
     private void changePrompt(boolean isPrompt, String hint, String defaultText, int lines) {
+        if (et_text == null || til == null) return; // prevent null pointer exceptions
         if (isPrompt) {
             // show the prompt area.
             til.setVisibility(View.VISIBLE);
@@ -593,6 +602,7 @@ public class SuperDialog extends DialogFragment {
     }
 
     private void changePromptToFail(String errorText) {
+        if (til == null) return; // prevent null pointer exceptions
         if (errorText != null) {
             this.isPromptErrorEnabled = true;
             til.setHelperTextEnabled(false); // hide the helper text, otherwise the layout would get messy. See Material Guidelines on EditText
@@ -610,6 +620,7 @@ public class SuperDialog extends DialogFragment {
     }
 
     private void changePromptHelper(String helperText) {
+        if (til == null) return; // prevent null pointer exceptions
         if (helperText != null) {
             this.isPromptHelperEnabled = true;
             til.setErrorEnabled(false); // hide the error text, otherwise the layout would get messy. See Material Guidelines on EditText
@@ -624,6 +635,7 @@ public class SuperDialog extends DialogFragment {
     }
 
     private void changePromptBackToNormal(boolean errorsToo) {
+        if (til == null) return; // prevent null pointer exceptions
         if (isPromptErrorEnabled) {
             this.isPromptErrorEnabled = false;
             til.setErrorEnabled(false);
@@ -649,12 +661,14 @@ public class SuperDialog extends DialogFragment {
     }
 
     private void changePromptHelperTextColor(@ColorRes int promptHelperTextColor) {
+        if (til == null) return; // prevent null pointer exceptions
         if (promptHelperTextColor != DEFAULT) {
             til.setHelperTextColor(ColorStateList.valueOf(ContextCompat.getColor(ctx, promptHelperTextColor)));
         }
     }
 
     private void changeOnPromptTextChanged(final OnTextInputListener onTextInputListener) {
+        if (et_text == null) return; // prevent null pointer exceptions
         if (onTextInputListener != null) {
             et_text.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -680,6 +694,7 @@ public class SuperDialog extends DialogFragment {
     }
 
     private void changePromptMaxTextLength(int maxTextLength) {
+        if (et_text == null) return; // prevent null pointer exceptions
         et_text.setFilters(new InputFilter[]{
                 new InputFilter.LengthFilter(maxTextLength),
         });
@@ -700,6 +715,7 @@ public class SuperDialog extends DialogFragment {
      * @param isCheckable
      */
     private void changeCheckable(boolean isCheckable){
+        if (accb_checkbox == null) return; // prevent null pointer exceptions
         if (isCheckable) {
             accb_checkbox.setVisibility(View.VISIBLE);
 
@@ -708,6 +724,7 @@ public class SuperDialog extends DialogFragment {
         }
     }
     private void changeCheckable(boolean isCheckable, boolean isCheckedByDefault){
+        if (accb_checkbox == null) return; // prevent null pointer exceptions
         if (isCheckable) {
             accb_checkbox.setVisibility(View.VISIBLE);
             changeCheckboxState(isCheckedByDefault);
@@ -717,9 +734,11 @@ public class SuperDialog extends DialogFragment {
         }
     }
     private void changeCheckboxText(String checkboxText){
+        if (accb_checkbox == null) return; // prevent null pointer exceptions
         accb_checkbox.setText(checkboxText);
     }
-    private void changeCheckboxState(boolean setChecked){
+    private void changeCheckboxState(boolean setChecked) {
+        if (accb_checkbox == null) return; // prevent null pointer exceptions
         accb_checkbox.setChecked(setChecked);
     }
 
@@ -729,6 +748,7 @@ public class SuperDialog extends DialogFragment {
      * @param positiveText
      */
     private void changePositiveText(String positiveText){
+        if (btn_positive == null || space == null) return; // prevent null pointer exceptions
         if (positiveText != null){
             btn_positive.setVisibility(View.VISIBLE);
             btn_positive.setText(positiveText);
@@ -744,6 +764,7 @@ public class SuperDialog extends DialogFragment {
         }
     }
     private void changeOnPositive(final OnButtonClickListener onPositive){
+        if (btn_positive == null) return; // prevent null pointer exceptions
         if (positiveText != null) {
             if (onPositive != null) {
                 btn_positive.setOnClickListener(new View.OnClickListener() {
@@ -767,11 +788,13 @@ public class SuperDialog extends DialogFragment {
         }
     }
     private void changePositiveTextColor(@ColorRes int positiveTextColorRes){
+        if (btn_positive == null) return; // prevent null pointer exceptions
         if (positiveTextColorRes != DEFAULT) {
             btn_positive.setTextColor(ContextCompat.getColor(ctx, positiveTextColorRes));
         }
     }
     private void changePositiveColor(@ColorRes int positiveColorRes){
+        if (btn_positive == null) return; // prevent null pointer exceptions
         if (positiveColorRes == DEFAULT) {
             TypedArray ta = ctx.obtainStyledAttributes(R.styleable.SuperDialogTheme);
             positiveColorRes = ta.getResourceId(R.styleable.SuperDialogTheme_sdt_positiveButtonColor, ContextCompat.getColor(ctx, R.color.secondary_green));
@@ -791,6 +814,7 @@ public class SuperDialog extends DialogFragment {
      * @param negativeText
      */
     private void changeNegativeText(String negativeText){
+        if (btn_negative == null || space == null) return; // prevent null pointer exceptions
         if (negativeText != null){
             btn_negative.setVisibility(View.VISIBLE);
             btn_negative.setText(negativeText);
@@ -806,6 +830,7 @@ public class SuperDialog extends DialogFragment {
         }
     }
     private void changeOnNegative(final OnButtonClickListener onNegative){
+        if (btn_negative == null) return; // prevent null pointer exceptions
         if (negativeText != null) {
             if (onNegative != null) {
                 btn_negative.setOnClickListener(new View.OnClickListener() {
@@ -830,11 +855,13 @@ public class SuperDialog extends DialogFragment {
         }
     }
     private void changeNegativeTextColor(@ColorRes int negativeTextColorRes){
+        if (btn_negative == null) return; // prevent null pointer exceptions
         if (negativeTextColorRes != DEFAULT) {
             btn_negative.setTextColor(ContextCompat.getColor(ctx, negativeTextColorRes));
         }
     }
     private void changeNegativeColor(@ColorRes int negativeColorRes){
+        if (btn_negative == null) return; // prevent null pointer exceptions
         if (negativeColorRes == DEFAULT) {
             TypedArray ta = ctx.obtainStyledAttributes(R.styleable.SuperDialogTheme);
             negativeColorRes = ta.getResourceId(R.styleable.SuperDialogTheme_sdt_negativeButtonColor, ContextCompat.getColor(ctx, R.color.secondary_green));
@@ -854,6 +881,7 @@ public class SuperDialog extends DialogFragment {
      * @param cancelText
      */
     private void changeCancelText(String cancelText){
+        if (btn_cancel == null) return; // prevent null pointer exceptions
         if (cancelText != null){
             btn_cancel.setVisibility(View.VISIBLE);
             btn_cancel.setText(cancelText);
@@ -862,6 +890,7 @@ public class SuperDialog extends DialogFragment {
         }
     }
     private void changeOnCancel(final OnButtonClickListener onCancel){
+        if (btn_cancel == null) return; // prevent null pointer exceptions
         if (cancelText != null) {
             if (onCancel != null) {
                 btn_cancel.setOnClickListener(new View.OnClickListener() {
@@ -885,11 +914,13 @@ public class SuperDialog extends DialogFragment {
         }
     }
     private void changeCancelTextColor(@ColorRes int cancelTextColorRes){
+        if (btn_cancel == null) return; // prevent null pointer exceptions
         if (cancelTextColorRes != DEFAULT) {
             btn_cancel.setTextColor(ContextCompat.getColor(ctx, cancelTextColorRes));
         }
     }
     private void changeCancelColor(@ColorRes int cancelColorRes){
+        if (btn_cancel == null) return; // prevent null pointer exceptions
         if (cancelColorRes == DEFAULT) {
             TypedArray ta = ctx.obtainStyledAttributes(R.styleable.SuperDialogTheme);
             cancelColorRes = ta.getResourceId(R.styleable.SuperDialogTheme_sdt_cancelButtonColor, ContextCompat.getColor(ctx, R.color.secondary_green));
@@ -911,6 +942,7 @@ public class SuperDialog extends DialogFragment {
      * @param title
      */
     private void changeTitle(String title){
+        if (tv_title == null) return; // prevent null pointer exceptions
         if (title != null){
             tv_title.setVisibility(View.VISIBLE);
             tv_title.setText(title);
@@ -920,6 +952,7 @@ public class SuperDialog extends DialogFragment {
         }
     }
     public void changeTitleCaps(boolean isAllCaps){
+        if (tv_title == null) return; // prevent null pointer exceptions
         if (title != null) {
             tv_title.setAllCaps(isAllCaps);
 
@@ -934,6 +967,7 @@ public class SuperDialog extends DialogFragment {
      * @param message
      */
     private void changeMessage(String message){
+        if (tv_message == null) return; // prevent null pointer exceptions
         if (message != null) {
             if (tv_message.getVisibility() != View.VISIBLE){
                 tv_message.setVisibility(View.VISIBLE);
@@ -947,7 +981,8 @@ public class SuperDialog extends DialogFragment {
             tv_message.setVisibility(View.GONE);
         }
     }
-    public void changeMessageGravity(int gravity){
+    private void changeMessageGravity(int gravity){
+        if (tv_message == null) return; // prevent null pointer exceptions
         if (message != null) {
             tv_message.setGravity(gravity);
         }
@@ -959,6 +994,7 @@ public class SuperDialog extends DialogFragment {
      * @param iconMode
      */
     private void changeIconMode(IconMode iconMode){
+        if (ai_animatedIcon == null) return; // prevent null pointer exceptions
         if (iconMode == IconMode.CUSTOM_IMAGE || iconMode == IconMode.NO_ICON){
             ai_animatedIcon.setVisibility(View.GONE);
 
@@ -969,6 +1005,7 @@ public class SuperDialog extends DialogFragment {
         ai_animatedIcon.setMode(iconMode);
     }
     private void changeCustomIconRes(@DrawableRes int customIconRes){
+        if (iv_icon == null) return; // prevent null pointer exceptions
         if (iconMode == IconMode.CUSTOM_IMAGE) {
             if (customIconRes != DEFAULT) {
                 iv_icon.setVisibility(View.VISIBLE);
@@ -980,7 +1017,12 @@ public class SuperDialog extends DialogFragment {
 
     // And Finally, to show the dialog
     public void show(FragmentManager fm){
-        isShown = true;
         show(fm, "");
+    }
+
+    @Override
+    public void show(@NonNull FragmentManager manager, @Nullable String tag) {
+        super.show(manager, tag);
+        isShown = true;
     }
 }

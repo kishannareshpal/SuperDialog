@@ -40,10 +40,6 @@ import android.widget.TextView;
 
 public class SuperDialog extends DialogFragment {
 
-    public static final int POSITIVE = 9;
-    public static final int NEGATIVE = 10;
-    public static final int CANCEL = 11;
-
     private static final int DEFAULT = -1;
 
     private boolean isShown = false;
@@ -108,7 +104,7 @@ public class SuperDialog extends DialogFragment {
     }
 
     public interface OnButtonClickListener {
-        void OnButtonClick(SuperDialog superDialog, int whichButton);
+        void OnButtonClick(SuperDialog superDialog, SuperDialogButtonType whichButton);
     }
 
     public interface OnTextInputListener {
@@ -770,7 +766,7 @@ public class SuperDialog extends DialogFragment {
                 btn_positive.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        onPositive.OnButtonClick(superDialog, POSITIVE);
+                        onPositive.OnButtonClick(superDialog, SuperDialogButtonType.POSITIVE);
                         if (cancelable){
                             getDialog().dismiss();
                         }
@@ -836,7 +832,7 @@ public class SuperDialog extends DialogFragment {
                 btn_negative.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        onNegative.OnButtonClick(superDialog, NEGATIVE);
+                        onNegative.OnButtonClick(superDialog, SuperDialogButtonType.NEGATIVE);
 
                         if (cancelable) {
                             getDialog().dismiss();
@@ -896,7 +892,7 @@ public class SuperDialog extends DialogFragment {
                 btn_cancel.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        onCancel.OnButtonClick(superDialog, CANCEL);
+                        onCancel.OnButtonClick(superDialog, SuperDialogButtonType.CANCEL);
                         if (cancelable) {
                             getDialog().dismiss();
                         }

@@ -7,7 +7,6 @@ apply plugin: 'com.android.application'
 // Make sure you user JDK 11 or less. JDK 13 is failing for now 26.12.19 with "General error during semantic analysis: Unsupported class file major version 57" error message.
 
 // execute "./gradlew clean build bintrayUpload -PbintrayUser={userid_bintray} -PbintrayKey={apikey_bintray} -PdryRun=false"
-// execute "./gradlew clean build bintrayUpload -PbintrayUser=kishannareshpal -PbintrayKey=ce6fff431e58e05cdad328bff33adfbde31e0ca6 -PdryRun=false"
 // dont forget to update the version name;
 
 android {

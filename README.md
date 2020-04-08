@@ -78,7 +78,7 @@ new SuperDialog()
     .title(String title)
 	.message(String body)
 	
-	.cancelable(boolean isCancelable) // If true, disallows dismiss when touched outside of the dialog.
+	.cancelable(boolean isCancelable) // If false, disallows dismiss when touched outside of the dialog.
 	
 	.positiveText(String positiveButtonText)
 	.positiveColorRes(@ColorRes positiveButtonBackgroundColor)
